@@ -1,63 +1,54 @@
-class Student:
-    # Конструктор класса с инициализацией атрибутов экземпляра
-    def __init__(self, full_name="", group_number=0, progress=[]): 
-        self.full_name = full_name # Имя студента
-        self.group_number = group_number # Номер группы студента
-        self.progress = progress # Список оценок студента
+from random import randint
 
-    # Метод для генерации строкового представления объекта
-    def __str__(self):
-        txt = 'Студент: ' + self.full_name + ' Группа: ' + str(self.group_number)
-        txt += ' Оценки:'
-        for x in self.progress:
-            txt += ' ' + str(x)  # Преобразование оценок в текстовую строку
-        return txt
+class Person:
+    count = 0
+    
+    def __init__(self, c):
+        self.id = Person.count
+        Person.count += 1
+        self.command = c
 
-# Функция для определения ключа сортировки по полному имени студента
-def SortParam(st):
-    return st.full_name
+class Hero(Person):
+    def __init__(self, c):
+        super().__init__(c)
+        self.level = 1
+        
+    def up_level(self):
+        self.level += 1
 
-# Количество студентов для ввода
-st_size = 5  
+class Soldier(Person):
+    def __init__(self, c):
+        super().__init__(c)
+        
+    def follow(self, hero):
+        self.my_hero = hero.id
 
-students = []  # Создаем пустой список для хранения объектов студентов
+# Создание героев
+h1 = Hero(1)  # первый герой
+h2 = Hero(2)  # второй герой
 
-# Ввод информации о каждом студенте
-for i in range(st_size):
-    print("Введите полное имя студента: ")
-    full_name = input()
-    print("Введите номер группы: ")
-    group_number = input()
-    n = 5
-    print('Введите ', n, ' оценок в столбик: ')
-    progress = []
-    for i in range(n):  
-        score = int(input())  # Ввод оценки студента
-        progress.append(score)  # Добавление оценки в список
-    st = Student(full_name, group_number, progress)  # Создание экземпляра класса Student
-    students.append(st)  # Добавление экземпляра в список студентов
+# Создание армий
+army1 = []  # первая армия
+army2 = []  # вторая армия
 
-# Вывод списка студентов
-print("Students list:")
-for st in students:
-    print(st)
+# Наполнение армий солдатами
+for i in range(20):
+    n = randint(1, 2)
+    if n == 1:
+        army1.append(Soldier(n))  # добавление солдата в первую армию
+    else:
+        army2.append(Soldier(n))  # добавление солдата во вторую армию
 
-# Сортировка списка студентов по полному имени
-students = sorted(students, key=SortParam)
+# Вывод численности армий
+print(len(army1), len(army2))
 
-# Вывод отсортированного списка студентов
-print("Sorted students:")
-for st in students:
-    print(st)
+# Повышение уровня героя для команды с большей численностью
+if len(army1) > len(army2):
+    h1.up_level()
+elif len(army1) < len(army2):
+    h2.up_level()
 
-# Вывод списка студентов, имеющих неудовлетворительные оценки
-print("bad students:")
-n = 0  # Счетчик студентов с неудовлетворительными оценками
-for st in students:
-    for val in st.progress:
-        if val < 3:  # Проверка на неудовлетворительную оценку
-            print(st)  # Вывод информации о студенте
-            n += 1
-            break
-if n == 0:
-    print("no matches were found.")
+# Первому солдату первой армии следовать за 1 героем
+if army1:  # Добавлена проверка на наличие солдат в армии перед доступом
+    army1[0].follow(h1)
+    print(army1[0].id, h1.id)  # Вывод ID первого солдата и первого героя
